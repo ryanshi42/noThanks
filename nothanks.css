@@ -1,0 +1,20 @@
+div {
+    border-style: solid;
+    border-width: 1px;
+    padding: 2.5%;
+}
+
+div.outside {
+    margin: 2.5%;
+}
+
+.players {
+    border-width: 1px;
+    border-style: solid;
+    width: 20%;
+}
+
+p {
+    border-style: solid;
+    border-width: 1px;
+}
