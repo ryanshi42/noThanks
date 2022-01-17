@@ -14,6 +14,7 @@ let gameStatus = false;
 let counters = 11;
 let playerCounters = [11, 11, 11, 11];
 let playerScores = [0, 0, 0, 0];
+let initDelete = false;
 
 function setUp() {
     currentPlayer = 1;
@@ -41,6 +42,8 @@ function startGame() {
         gameStatus = true;
         chosenCard = Math.floor(Math.random()*(availableCards.length));
         currentCard = availableCards[chosenCard];
+
+        // Shuffle the order of the players
         var ul = document.getElementById("displayPlayerNames");
         for (var i = ul.children.length; i >= 1; i--) {
             ul.appendChild(ul.children[Math.ceil(Math.random() * i)]);
@@ -129,6 +132,7 @@ function updateActivePlayers(a) {
     if (a == 0) {
         if (activePlayers < 8) {
             activePlayers += 1;
+            initDelete = true;
             // TODO:
             playerCards.push([]);
             playerScores.push(0);
@@ -168,6 +172,20 @@ function updateActivePlayers(a) {
             playerScores.pop();
             playerCounters.pop();
 
+            // A funny bug where there might be duplicate names and needs double delete
+            if (initDelete == false) {
+                pn = document.getElementById("displayPlayerNames");
+                pn.removeChild(pn.lastChild);
+
+                pco = document.getElementById("displayCountersRemaining");
+                pco.removeChild(pco.lastChild);
+
+                pca = document.getElementById("displayCardsTaken") ;
+                pca.removeChild(pca.lastChild);
+
+                ps = document.getElementById("displayCurrentScores");
+                ps.removeChild(ps.lastChild);
+            }
             pn = document.getElementById("displayPlayerNames");
             pn.removeChild(pn.lastChild);
 
