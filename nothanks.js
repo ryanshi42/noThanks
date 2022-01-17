@@ -78,6 +78,12 @@ function takeCard() {
     playerCards[currentPlayer - 1].sort((a,b)=>a-b);
     document.getElementById("p" + currentPlayer.toString() + "cards").innerHTML = playerCards[currentPlayer - 1];
 
+    if (availableCards.length == 0) {
+        // Game over!
+        gameStatus = false;
+        
+        return null;
+    }
 
     chosenCard = Math.floor(Math.random()*(availableCards.length));
     currentCard = availableCards[chosenCard];
