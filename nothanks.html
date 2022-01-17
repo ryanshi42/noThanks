@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="nothanks.css">
+        <script src="nothanks.js"></script>
+        <title>No Thanks!</title>
+    </head>
+    <body onload="setUp()">
+        <div class="outside">
+            <p>Need the rules? Click <span><a href="rules.html">here</a></span></p>
+            <div>
+                <p>How many people are playing?</p>
+                <span><button onclick="updateActivePlayers(0)">&#8593</button>  <span id="activePlayers">4</span>  <button onclick="updateActivePlayers(1)">&#8595</button></span>
+                <p>How many counters per player?</p>
+                <span><button onclick="updateCounters(0)">&#8593</button>  <span id="counters">11</span>  <button onclick="updateCounters(1)">&#8595</button></span>
+            </div>
+            <div>
+                <table>
+                    <tr id="displayPlayerNames">
+                        <th></th>
+                        <th>Player 1: <input placeholder="bobsmiley"></th>
+                        <th>Player 2: <input placeholder="bobsmiley"></th>
+                        <th>Player 3: <input placeholder="bobsmiley"></th>
+                        <th>Player 4: <input placeholder="bobsmiley"></th>
+                    </tr>
+                    <tr id="displayCountersRemaining">
+                        <td>Counters Remaining</td>
+                        <td id="p1counters"></td>
+                        <td id="p2counters"></td>
+                        <td id="p3counters"></td>
+                        <td id="p4counters"></td>
+                    </tr>
+                    <tr id="displayCardsTaken">
+                        <td>Cards Taken</td>
+                        <td id="p1cards"></td>
+                        <td id="p2cards"></td>
+                        <td id="p3cards"></td>
+                        <td id="p4cards"></td>
+                    </tr>
+                    <tr id="displayCurrentScores">
+                        <td>Current Score</td>
+                        <td id="p1score">-11</td>
+                        <td id="p2score">-11</td>
+                        <td id="p3score">-11</td>
+                        <td id="p4score">-11</td>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <p>It is currently Player <span id="playerID">1</span>'s turn!</p>
+                <p>There are currently <span id="currentCounters">0</span> counters on this card.</p>
+                <p>Current card: <span id="currentCard">wow, such empty</span></p>
+                <p>Cards remaining in deck: <span id="availableCards"></span></p>
+                <button onclick="passItOn()">No Thanks!</button>
+                <button onclick="takeCard()">Don't mind if I do!</button>
+            </div>
+            <div>
+                <button onclick="startGame()">Start Game</button>
+                <button onclick="setUp()">Reset Game</button>
+            </div>
+        </div>
+    </body>
+</html>
