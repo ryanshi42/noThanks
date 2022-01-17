@@ -41,6 +41,10 @@ function startGame() {
         gameStatus = true;
         chosenCard = Math.floor(Math.random()*(availableCards.length));
         currentCard = availableCards[chosenCard];
+        var ul = document.getElementById("displayPlayerNames");
+        for (var i = ul.children.length; i >= 1; i--) {
+            ul.appendChild(ul.children[Math.ceil(Math.random() * i)]);
+        }
         document.getElementById("currentCard").innerHTML = currentCard;
         availableCards.splice(chosenCard, 1);
         document.getElementById("availableCards").innerHTML = availableCards;
