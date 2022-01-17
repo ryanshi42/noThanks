@@ -24,6 +24,8 @@ function setUp() {
     }
     document.getElementById("availableCards").innerHTML = availableCards;
     for (let j = 1; j <= activePlayers; j++) {
+        let pCounters = "p" + j.toString() + "counters";
+        document.getElementById(pCounters).innerHTML = counters;
         let pCards = "p" + j.toString() + "cards";
         document.getElementById(pCards).innerHTML = [];
         let pScore = "p" + j.toString() + "score";
@@ -67,7 +69,7 @@ function takeCard() {
 
     playerCards[currentPlayer - 1].push(currentCard)
     playerCards[currentPlayer - 1].sort((a,b)=>a-b);
-    document.getElementById("p" + currentPlayer.toString() + "cards").innerHTML = p1cards;
+    document.getElementById("p" + currentPlayer.toString() + "cards").innerHTML = playerCards[currentPlayer - 1];
 
 
     chosenCard = Math.floor(Math.random()*(availableCards.length));
@@ -137,15 +139,16 @@ function updateActivePlayers(a) {
 
             var td = document.createElement("td");
             td.id = "p" + activePlayers.toString() + "counters";
+            td.innerHTML = counters
             document.getElementById("displayCountersRemaining").appendChild(td);
 
             var td1 = document.createElement("td");
             td1.id = "p" + activePlayers.toString() + "cards";
-            document.getElementById("displayCardsRemaining").appendChild(td1);
+            document.getElementById("displayCardsTaken").appendChild(td1);
 
             var td2 = document.createElement("td");
             td2.id = "p" + activePlayers.toString() + "score";
-            td2.innerHTML = -11;
+            td2.innerHTML = -counters;
             document.getElementById("displayCurrentScores").appendChild(td2);
 
             
@@ -157,21 +160,21 @@ function updateActivePlayers(a) {
     else {
         if (activePlayers > 2) {
             activePlayers -= 1;
-            playerCards.remove(-1);
-            playerScores.remove(-1);
-            playerCounters.remove(-1);
+            playerCards.pop();
+            playerScores.pop();
+            playerCounters.pop();
 
-            document.getElementById("displayPlayerNames") = playerNames;
-            playerNames.removeChild(playerNames.lastChild);
+            pn = document.getElementById("displayPlayerNames");
+            pn.removeChild(pn.lastChild);
 
-            document.getElementById("displayCountersRemaining") = playerCounters;
-            playerCounters.removeChild(playerCounters.lastChild);
+            pco = document.getElementById("displayCountersRemaining");
+            pco.removeChild(pco.lastChild);
 
-            document.getElementById("displayCardsRemaining") = playerCards;
-            playerCards.removeChild(playerNames.lastChild);
+            pca = document.getElementById("displayCardsTaken") ;
+            pca.removeChild(pca.lastChild);
 
-            document.getElementById("displayCurrentScores") = playerScores;
-            playerScores.removeChild(playerScores.lastChild);
+            ps = document.getElementById("displayCurrentScores");
+            ps.removeChild(ps.lastChild);
         }
         else {
             window.alert("You have already reached the minimum number of players!");
