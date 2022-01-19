@@ -47,7 +47,7 @@ function setUp() {
         let pCards = "p" + j.toString() + "cards";
         document.getElementById(pCards).innerHTML = [];
         let pScore = "p" + j.toString() + "score";
-        document.getElementById(pScore).innerHTML = -counters;
+        document.getElementById(pScore).innerHTML = -playerCounters[j - 1];
 
     }
     document.getElementById("currentCard").innerHTML = "wow, such empty";
@@ -57,7 +57,7 @@ function setUp() {
 function hiddenCounter(a) {
     showCounters = a == 0 ? false : true;
     for (let j = 1; j <= activePlayers; j++) {
-        document.getElementById("p" + j.toString() + "counters").innerHTML = a == 0 ? "Hidden" : playerCounters[j];
+        document.getElementById("p" + j.toString() + "counters").innerHTML = a == 0 ? "Hidden" : playerCounters[j - 1];
     }
 }
 
@@ -155,7 +155,7 @@ function updateCurrentCounter(action) {
     }
     else {
         playerCounters[currentPlayer - 1] += currentCounters;
-        document.getElementById("p" + currentPlayer.toString() + "counters").innerHTML = playerCounters[currentPlayer - 1];
+        document.getElementById("p" + currentPlayer.toString() + "counters").innerHTML = showCounters == true ? playerCounters[currentPlayer - 1] : "Hidden";
         currentCounters = 0;
         document.getElementById("currentCounters").innerHTML = currentCounters;
     }
@@ -173,7 +173,7 @@ function updateScore() {
     }
     currScore -= playerCounters[currentPlayer - 1];
     playerScores[currentPlayer - 1] = currScore;
-    document.getElementById("p" + currentPlayer.toString() + "score").innerHTML = showCounters == true ? currScore : "Hidden";
+    document.getElementById("p" + currentPlayer.toString() + "score").innerHTML = currScore;
 }
 
 function updateActivePlayers(a) {
