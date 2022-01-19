@@ -8,56 +8,99 @@ for (var i = minCard; i <= maxCard; i++) {
 }
 let currentCard = 0;
 let chosenCard = 0;
-let playerCards = [[], [], [], []];
 let activePlayers = 4;
 let gameStatus = false;
 let counters = 11;
+let playerCards = [[], [], [], []];
+let playerOrder = [1, 2, 3, 4];
 let playerCounters = [11, 11, 11, 11];
 let playerScores = [0, 0, 0, 0];
 let initDelete = false;
+let showCounters = true;
+let showCards = true;
+let gameFinished = false;
 
 function setUp() {
+    gameFinished = false;
     currentPlayer = 1;
     currentCounters = 0;
     availableCards = [];
     for (var i = minCard; i <= maxCard; i++) {
         availableCards.push(i);
     }
-    document.getElementById("availableCards").innerHTML = availableCards;
+    playerScores = [];
+    for (var i = 1; i <= activePlayers; i++) {
+        playerScores.push(0);
+    }
+    playerCounters = [];
+    for (var i = 1; i <= activePlayers; i++) {
+        playerCounters.push(counters);
+    }
+    playerCards = [];
+    for (var i = 1; i <= activePlayers; i++) {
+        playerCards.push([]);
+    }
+    document.getElementById("availableCards").innerHTML = showCards == true ? availableCards : "Hidden";
     for (let j = 1; j <= activePlayers; j++) {
         let pCounters = "p" + j.toString() + "counters";
-        document.getElementById(pCounters).innerHTML = counters;
+        document.getElementById(pCounters).innerHTML = showCounters == true ? counters : "Hidden";
         let pCards = "p" + j.toString() + "cards";
         document.getElementById(pCards).innerHTML = [];
         let pScore = "p" + j.toString() + "score";
-        document.getElementById(pScore).innerHTML = -counters;
+        document.getElementById(pScore).innerHTML = -playerCounters[j - 1];
 
     }
     document.getElementById("currentCard").innerHTML = "wow, such empty";
     gameStatus = false;
 }
 
+function hiddenCounter(a) {
+    showCounters = a == 0 ? false : true;
+    for (let j = 1; j <= activePlayers; j++) {
+        document.getElementById("p" + j.toString() + "counters").innerHTML = a == 0 ? "Hidden" : playerCounters[j - 1];
+    }
+}
+
+function hiddenCards(a) {
+    showCards = a == 0 ? false : true;
+    document.getElementById("availableCards").innerHTML = a == 0 ?  "Hidden" : availableCards;
+}
+
 function startGame() {
-    if (gameStatus == false) {
+    if (gameStatus == false && gameFinished == false) {
         gameStatus = true;
         chosenCard = Math.floor(Math.random()*(availableCards.length));
         currentCard = availableCards[chosenCard];
 
         // Shuffle the order of the players
         var ul = document.getElementById("displayPlayerNames");
-        for (var i = ul.children.length; i >= 1; i--) {
-            ul.appendChild(ul.children[Math.ceil(Math.random() * i)]);
+        playerOrder = [];
+        for (let i = ul.children.length - 1; i >= 1; i--) {
+            newIndex = Math.ceil(Math.random() * i);
+            playerOrder.push(ul.children[newIndex].innerHTML[7]);
+            ul.appendChild(ul.children[newIndex]);
         }
-        document.getElementById("currentCard").innerHTML = currentCard;
-        availableCards.splice(chosenCard, 1);
-        document.getElementById("availableCards").innerHTML = availableCards;
+        playerOrder.splice(0, 1);
+        for (let i = 0; i < 6; i++) {
+            chosenCard = Math.floor(Math.random()*(availableCards.length));
+            currentCard = availableCards[chosenCard];
+            document.getElementById("currentCard").innerHTML = currentCard;
+            availableCards.splice(chosenCard, 1);
+            document.getElementById("availableCards").innerHTML = showCards == true ? availableCards : "Hidden";
+        }
+        document.getElementById("availableCards").innerHTML = showCards == true ? availableCards : "Hidden";
+        document.getElementById("playerID").innerHTML = playerOrder[currentPlayer - 1];
     }
     else {
-        window.alert("The game has already started!");
+        window.alert("The game has already started (or hasn't been reset)!");
     }
 }
 
 function passItOn() {
+    if (gameStatus == false || gameFinished == true) {
+        window.alert("You haven't started the game yet!");
+        return 0;
+    }
     if (playerCounters[currentPlayer - 1] > 0) {
         playerCounters[currentPlayer - 1] -= 1;
         document.getElementById("p" + currentPlayer.toString() + "counters").innerHTML = playerCounters[currentPlayer - 1];
@@ -72,27 +115,29 @@ function passItOn() {
 }
 
 function takeCard() {
+    if (gameStatus == false || gameFinished == true) {
+        window.alert("You haven't started the game yet!");
+        return 0;
+    }
     updateCurrentCounter("take");
 
     playerCards[currentPlayer - 1].push(currentCard)
     playerCards[currentPlayer - 1].sort((a,b)=>a-b);
     document.getElementById("p" + currentPlayer.toString() + "cards").innerHTML = playerCards[currentPlayer - 1];
 
-    if (availableCards.length == 0) {
-        // Game over!
-        gameStatus = false;
-        
-        return null;
-    }
-
     chosenCard = Math.floor(Math.random()*(availableCards.length));
     currentCard = availableCards[chosenCard];
     document.getElementById("currentCard").innerHTML = currentCard;
     availableCards.splice(chosenCard, 1);
-    document.getElementById("availableCards").innerHTML = availableCards;
+    document.getElementById("availableCards").innerHTML = showCards == true ? availableCards : "Hidden";
     
     updateScore();
     incrementPlayer();
+
+    if (currentCard == undefined) {
+        announceWinner();
+        return 0;
+    }
 }
 
 function incrementPlayer() {
@@ -100,7 +145,7 @@ function incrementPlayer() {
     if (currentPlayer > activePlayers) {
         currentPlayer = 1;
     }
-    document.getElementById("playerID").innerHTML = currentPlayer;
+    document.getElementById("playerID").innerHTML = playerOrder[currentPlayer - 1];
 }
 
 function updateCurrentCounter(action) {
@@ -110,7 +155,7 @@ function updateCurrentCounter(action) {
     }
     else {
         playerCounters[currentPlayer - 1] += currentCounters;
-        document.getElementById("p" + currentPlayer.toString() + "counters").innerHTML = playerCounters[currentPlayer - 1];
+        document.getElementById("p" + currentPlayer.toString() + "counters").innerHTML = showCounters == true ? playerCounters[currentPlayer - 1] : "Hidden";
         currentCounters = 0;
         document.getElementById("currentCounters").innerHTML = currentCounters;
     }
@@ -127,11 +172,12 @@ function updateScore() {
         }
     }
     currScore -= playerCounters[currentPlayer - 1];
+    playerScores[currentPlayer - 1] = currScore;
     document.getElementById("p" + currentPlayer.toString() + "score").innerHTML = currScore;
 }
 
 function updateActivePlayers(a) {
-    if (gameStatus == true) {
+    if (gameStatus == true || gameFinished == true) {
         window.alert("Can't change the number of players after the game has started - please reset!");
         return 0;
     }
@@ -139,7 +185,6 @@ function updateActivePlayers(a) {
         if (activePlayers < 8) {
             activePlayers += 1;
             initDelete = true;
-            // TODO:
             playerCards.push([]);
             playerScores.push(0);
             playerCounters.push(11);
@@ -212,7 +257,7 @@ function updateActivePlayers(a) {
 }
 
 function updateCounters(a) {
-    if (gameStatus == true) {
+    if (gameStatus == true || gameFinished == true) {
         window.alert("Can't change the number of counters after the game has started - please reset!");
         return 0;
     }
@@ -229,11 +274,44 @@ function updateCounters(a) {
     }
 }
 
-// Take out 5 cards at the start
-// Hide counters
-// Hide remaining cards
-// Announce game winner when last card has been taken
-// Increase max. number of players to 8
+function announceWinner() {
+    gameFinished = true;
+    gameStatus = false;
+    let scores = playerScores;
+    let min = scores[0];
+    let minPos = [0];
+    for (var i = 1; i <= activePlayers; i++) {
+        if (scores[i] < min) {
+            min = scores[i];
+            minPos = [i];
+        }
+        else if (scores[i] == min) {
+            minPos.push(i);
+        }
+    }
+
+    let congratulationString = "Congratulations to ";
+
+    for (var j = 0; j < minPos.length; j++) {
+        minPos[j] = "Player " + playerOrder[minPos[j]];
+    }
+
+    if (minPos.length == 1) {
+        congratulationString += (minPos + "!");
+    }
+    else {
+        for (var k = 0; k < minPos.length - 2; k++) {
+            congratulationString += (minPos[k] + ", ");
+        }
+        congratulationString += (minPos[k] + " and ");
+        congratulationString += (minPos[minPos.length - 1] + "!");
+    }
+    window.alert(congratulationString);
+}
+
+// Announce game winner when last card has been taken, make this pretty :')
+// BUG: Why doesn't the current card and Cards Taken update before the winner is announced?
+
 // Make it look pretty
 
 // Stuff I still don't know how to make it online multiplayer :")

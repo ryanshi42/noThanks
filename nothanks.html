@@ -13,6 +13,20 @@
                 <span><button onclick="updateActivePlayers(0)">&#8593</button>  <span id="activePlayers">4</span>  <button onclick="updateActivePlayers(1)">&#8595</button></span>
                 <p>How many counters per player?</p>
                 <span><button onclick="updateCounters(0)">&#8593</button>  <span id="counters">11</span>  <button onclick="updateCounters(1)">&#8595</button></span>
+                <p>
+                    <form>
+                        <input onclick="hiddenCounter(1)" type="radio" id="hideCountersFalse" name="hideCounters" checked>
+                        <label for="hideCountersFalse">Show remaining counters</label>
+                        <input onclick="hiddenCounter(0)" type="radio" id="hideCountersTrue" name="hideCounters">
+                        <label for="hideCountersTrue">Hide remaining counters</label>
+                    </form>
+                    <form>
+                        <input onclick="hiddenCards(1)" type="radio" id="hideCardsFalse" name="hideCards" checked>
+                        <label for="hideCardsFalse">Show remaining cards</label>
+                        <input onclick="hiddenCards(0)" type="radio" id="hideCardsTrue" name="hideCards">
+                        <label for="hideCardsTrue">Hide remaining cards</label>
+                    </form>
+                </p>
             </div>
             <div>
                 <table>
