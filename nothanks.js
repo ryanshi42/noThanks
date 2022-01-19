@@ -280,7 +280,7 @@ function announceWinner() {
     let scores = playerScores;
     let min = scores[0];
     let minPos = [0];
-    for (var i = 1; i < activePlayers; i++) {
+    for (var i = 1; i <= activePlayers; i++) {
         if (scores[i] < min) {
             min = scores[i];
             minPos = [i];
@@ -309,11 +309,11 @@ function announceWinner() {
     window.alert(congratulationString);
 }
 
-// Take out 5 cards at the start
-// Hide counters
-// Hide remaining cards
-// Announce game winner when last card has been taken
-// Increase max. number of players to 8
+// Announce game winner when last card has been taken, make this pretty :')
+// BUG: Why doesn't the current card and Cards Taken update before the winner is announced?
+// BUG: Why is the player sometimes undefined when the game finishes? It's a very hard to reproduce bug?
+    // EDIT: possibly has been fixed???
+
 // Make it look pretty
 
 // Stuff I still don't know how to make it online multiplayer :")
