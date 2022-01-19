@@ -12,9 +12,12 @@ let playerCards = [[], [], [], []];
 let activePlayers = 4;
 let gameStatus = false;
 let counters = 11;
+let playerOrder = [1, 2, 3, 4];
 let playerCounters = [11, 11, 11, 11];
 let playerScores = [0, 0, 0, 0];
 let initDelete = false;
+let showCounters = true;
+let showCards = true;
 
 function setUp() {
     currentPlayer = 1;
@@ -23,10 +26,10 @@ function setUp() {
     for (var i = minCard; i <= maxCard; i++) {
         availableCards.push(i);
     }
-    document.getElementById("availableCards").innerHTML = availableCards;
+    document.getElementById("availableCards").innerHTML = showCards == true ? availableCards : "Hidden";
     for (let j = 1; j <= activePlayers; j++) {
         let pCounters = "p" + j.toString() + "counters";
-        document.getElementById(pCounters).innerHTML = counters;
+        document.getElementById(pCounters).innerHTML = showCounters == true ? counters : "Hidden";
         let pCards = "p" + j.toString() + "cards";
         document.getElementById(pCards).innerHTML = [];
         let pScore = "p" + j.toString() + "score";
@@ -37,6 +40,18 @@ function setUp() {
     gameStatus = false;
 }
 
+function hiddenCounter(a) {
+    showCounters = a == 0 ? false : true;
+    for (let j = 1; j <= activePlayers; j++) {
+        document.getElementById("p" + j.toString() + "counters").innerHTML = a == 0 ? "Hidden" : playerCounters[j];
+    }
+}
+
+function hiddenCards(a) {
+    showCards = a == 0 ? false : true;
+    document.getElementById("availableCards").innerHTML = a == 0 ?  "Hidden" : availableCards;
+}
+
 function startGame() {
     if (gameStatus == false) {
         gameStatus = true;
@@ -45,12 +60,21 @@ function startGame() {
 
         // Shuffle the order of the players
         var ul = document.getElementById("displayPlayerNames");
-        for (var i = ul.children.length; i >= 1; i--) {
-            ul.appendChild(ul.children[Math.ceil(Math.random() * i)]);
+        playerOrder = [];
+        for (let i = ul.children.length; i >= 1; i--) {
+            newIndex = Math.ceil(Math.random() * i);
+            playerOrder.push(ul.children[newIndex].innerHTML[7]);
+            ul.appendChild(ul.children[newIndex]);
         }
-        document.getElementById("currentCard").innerHTML = currentCard;
-        availableCards.splice(chosenCard, 1);
-        document.getElementById("availableCards").innerHTML = availableCards;
+        playerOrder.splice(0, 1);
+        for (let i = 0; i < 6; i++) {
+            chosenCard = Math.floor(Math.random()*(availableCards.length));
+            currentCard = availableCards[chosenCard];
+            document.getElementById("currentCard").innerHTML = currentCard;
+            availableCards.splice(chosenCard, 1);
+            document.getElementById("availableCards").innerHTML = showCards == true ? availableCards : "Hidden";
+        }
+        document.getElementById("availableCards").innerHTML = showCards == true ? availableCards : "Hidden";
     }
     else {
         window.alert("The game has already started!");
@@ -58,6 +82,10 @@ function startGame() {
 }
 
 function passItOn() {
+    if (gameStatus == false) {
+        window.alert("You haven't started the game yet!");
+        return 0;
+    }
     if (playerCounters[currentPlayer - 1] > 0) {
         playerCounters[currentPlayer - 1] -= 1;
         document.getElementById("p" + currentPlayer.toString() + "counters").innerHTML = playerCounters[currentPlayer - 1];
@@ -72,27 +100,29 @@ function passItOn() {
 }
 
 function takeCard() {
+    if (gameStatus == false) {
+        window.alert("You haven't started the game yet!");
+        return 0;
+    }
     updateCurrentCounter("take");
 
     playerCards[currentPlayer - 1].push(currentCard)
     playerCards[currentPlayer - 1].sort((a,b)=>a-b);
     document.getElementById("p" + currentPlayer.toString() + "cards").innerHTML = playerCards[currentPlayer - 1];
 
-    if (availableCards.length == 0) {
-        // Game over!
-        gameStatus = false;
-        
-        return null;
-    }
-
     chosenCard = Math.floor(Math.random()*(availableCards.length));
     currentCard = availableCards[chosenCard];
     document.getElementById("currentCard").innerHTML = currentCard;
     availableCards.splice(chosenCard, 1);
-    document.getElementById("availableCards").innerHTML = availableCards;
+    document.getElementById("availableCards").innerHTML = showCards == true ? availableCards : "Hidden";
     
     updateScore();
     incrementPlayer();
+
+    if (currentCard == undefined) {
+        announceWinner();
+        return 0;
+    }
 }
 
 function incrementPlayer() {
@@ -127,7 +157,8 @@ function updateScore() {
         }
     }
     currScore -= playerCounters[currentPlayer - 1];
-    document.getElementById("p" + currentPlayer.toString() + "score").innerHTML = currScore;
+    playerScores[currentPlayer - 1] = currScore;
+    document.getElementById("p" + currentPlayer.toString() + "score").innerHTML = showCounters == true ? currScore : "Hidden";
 }
 
 function updateActivePlayers(a) {
@@ -139,7 +170,6 @@ function updateActivePlayers(a) {
         if (activePlayers < 8) {
             activePlayers += 1;
             initDelete = true;
-            // TODO:
             playerCards.push([]);
             playerScores.push(0);
             playerCounters.push(11);
@@ -227,6 +257,40 @@ function updateCounters(a) {
     for (let i = 1; i <= activePlayers; i++) {
         document.getElementById("p" + i.toString() + "counters").innerHTML = counters;
     }
+}
+
+function announceWinner() {
+    gameStatus = false;
+    let scores = playerScores;
+    let min = scores[0];
+    let minPos = [0];
+    for (var i = 1; i < activePlayers; i++) {
+        if (scores[i] < min) {
+            min = scores[i];
+            minPos = [i];
+        }
+        else if (scores[i] == min) {
+            minPos.push(i);
+        }
+    }
+
+    let congratulationString = "Congratulations to ";
+
+    for (var j = 0; j < minPos.length; j++) {
+        minPos[j] = "Player " + playerOrder[minPos[j]];
+    }
+
+    if (minPos.length == 1) {
+        congratulationString += (minPos + "!");
+    }
+    else {
+        for (var k = 0; k < minPos.length - 2; k++) {
+            congratulationString += (minPos[k] + ", ");
+        }
+        congratulationString += (minPos[k] + " and ");
+        congratulationString += (minPos[minPos.length - 1] + "!");
+    }
+    window.alert(congratulationString);
 }
 
 // Take out 5 cards at the start
