@@ -75,7 +75,7 @@ function startGame() {
         // Shuffle the order of the players
         var ul = document.getElementById("displayPlayerNames");
         playerOrder = [];
-        for (let i = ul.children.length; i >= 1; i--) {
+        for (let i = ul.children.length - 1; i >= 1; i--) {
             newIndex = Math.ceil(Math.random() * i);
             playerOrder.push(ul.children[newIndex].innerHTML[7]);
             ul.appendChild(ul.children[newIndex]);
@@ -311,8 +311,6 @@ function announceWinner() {
 
 // Announce game winner when last card has been taken, make this pretty :')
 // BUG: Why doesn't the current card and Cards Taken update before the winner is announced?
-// BUG: Why is the player sometimes undefined when the game finishes? It's a very hard to reproduce bug?
-    // EDIT: possibly has been fixed???
 
 // Make it look pretty
 
