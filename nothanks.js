@@ -8,23 +8,37 @@ for (var i = minCard; i <= maxCard; i++) {
 }
 let currentCard = 0;
 let chosenCard = 0;
-let playerCards = [[], [], [], []];
 let activePlayers = 4;
 let gameStatus = false;
 let counters = 11;
+let playerCards = [[], [], [], []];
 let playerOrder = [1, 2, 3, 4];
 let playerCounters = [11, 11, 11, 11];
 let playerScores = [0, 0, 0, 0];
 let initDelete = false;
 let showCounters = true;
 let showCards = true;
+let gameFinished = false;
 
 function setUp() {
+    gameFinished = false;
     currentPlayer = 1;
     currentCounters = 0;
     availableCards = [];
     for (var i = minCard; i <= maxCard; i++) {
         availableCards.push(i);
+    }
+    playerScores = [];
+    for (var i = 1; i <= activePlayers; i++) {
+        playerScores.push(0);
+    }
+    playerCounters = [];
+    for (var i = 1; i <= activePlayers; i++) {
+        playerCounters.push(counters);
+    }
+    playerCards = [];
+    for (var i = 1; i <= activePlayers; i++) {
+        playerCards.push([]);
     }
     document.getElementById("availableCards").innerHTML = showCards == true ? availableCards : "Hidden";
     for (let j = 1; j <= activePlayers; j++) {
@@ -53,7 +67,7 @@ function hiddenCards(a) {
 }
 
 function startGame() {
-    if (gameStatus == false) {
+    if (gameStatus == false && gameFinished == false) {
         gameStatus = true;
         chosenCard = Math.floor(Math.random()*(availableCards.length));
         currentCard = availableCards[chosenCard];
@@ -75,14 +89,15 @@ function startGame() {
             document.getElementById("availableCards").innerHTML = showCards == true ? availableCards : "Hidden";
         }
         document.getElementById("availableCards").innerHTML = showCards == true ? availableCards : "Hidden";
+        document.getElementById("playerID").innerHTML = playerOrder[currentPlayer - 1];
     }
     else {
-        window.alert("The game has already started!");
+        window.alert("The game has already started (or hasn't been reset)!");
     }
 }
 
 function passItOn() {
-    if (gameStatus == false) {
+    if (gameStatus == false || gameFinished == true) {
         window.alert("You haven't started the game yet!");
         return 0;
     }
@@ -100,7 +115,7 @@ function passItOn() {
 }
 
 function takeCard() {
-    if (gameStatus == false) {
+    if (gameStatus == false || gameFinished == true) {
         window.alert("You haven't started the game yet!");
         return 0;
     }
@@ -130,7 +145,7 @@ function incrementPlayer() {
     if (currentPlayer > activePlayers) {
         currentPlayer = 1;
     }
-    document.getElementById("playerID").innerHTML = currentPlayer;
+    document.getElementById("playerID").innerHTML = playerOrder[currentPlayer - 1];
 }
 
 function updateCurrentCounter(action) {
@@ -162,7 +177,7 @@ function updateScore() {
 }
 
 function updateActivePlayers(a) {
-    if (gameStatus == true) {
+    if (gameStatus == true || gameFinished == true) {
         window.alert("Can't change the number of players after the game has started - please reset!");
         return 0;
     }
@@ -242,7 +257,7 @@ function updateActivePlayers(a) {
 }
 
 function updateCounters(a) {
-    if (gameStatus == true) {
+    if (gameStatus == true || gameFinished == true) {
         window.alert("Can't change the number of counters after the game has started - please reset!");
         return 0;
     }
@@ -260,6 +275,7 @@ function updateCounters(a) {
 }
 
 function announceWinner() {
+    gameFinished = true;
     gameStatus = false;
     let scores = playerScores;
     let min = scores[0];
